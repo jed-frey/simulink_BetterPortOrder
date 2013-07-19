@@ -7,6 +7,7 @@ toss=strcmpi(get_param(topLevel,'Parent'),get(subSystems,'Parent'));
 subSystems(toss)='';
 
 if length(subSystems)<2
+   errordlg('Please select at least 2 subsystems'); 
    error('Please select at least 2 subsystems'); 
 end
 
@@ -28,25 +29,29 @@ for i=1:length(subSystems)
     out_tmp=find_system(subSystems(i),'FindAll','on','SearchDepth',1,'BlockType','Outport');
     
     % Get the port names.
-    portNames=get(in_tmp,'Name');
-    % If the portNames is not a cell there is only one of the ports, turn
-    % it into a cell so the rest of the processing works.
-    if ~iscell(portNames)
-        portNames={portNames};
+    if ~isempty(in_tmp)
+        portNames=get(in_tmp,'Name');
+        % If the portNames is not a cell there is only one of the ports, turn
+        % it into a cell so the rest of the processing works.
+        if ~iscell(portNames)
+            portNames={portNames};
+        end
+        % Sort by the lowecase representation of the names. Matlab sorts
+        % capital and lowercase different.
+        [~,sorted_order]=sort(lower(portNames));
+        % Rearrange the inports into alphabetical order.
+        ports(i).in=in_tmp(sorted_order); %#ok<*SAGROW,*AGROW>
     end
-    % Sort by the lowecase representation of the names. Matlab sorts
-    % capital and lowercase different.
-    [~,sorted_order]=sort(lower(portNames));
-    % Rearrange the inports into alphabetical order.
-    ports(i).in=in_tmp(sorted_order); %#ok<*AGROW>
     
     % Repeat for the outports.
-    portNames=get(out_tmp,'Name');
-    if ~iscell(portNames)
-        portNames={portNames};
+    if ~isempty(out_tmp)
+        portNames=get(out_tmp,'Name');
+        if ~iscell(portNames)
+            portNames={portNames};
+        end
+        [~,sorted_order]=sort(lower(portNames));
+        ports(i).out=out_tmp(sorted_order);
     end
-    [~,sorted_order]=sort(lower(portNames));
-    ports(i).out=out_tmp(sorted_order);
 end
 %% Get relative port positions
 % For each of the subystems.
@@ -231,12 +236,22 @@ for i=1:length(subSystems)
         set(ports(i).IdealOutOrder(j),'Port',num2str(j));
     end
 end
-
-
+%% Add Inports & Connect.
 ButtonName = questdlg('Would you like to add in and out ports for blocks that go straight in or out', ...
     'Add I/O', ...
     'Yes', 'No', 'Yes');
 if strcmp(ButtonName,'Yes')
+    ButtonName = questdlg('Would you like to clear current lines, inports and out ports (strongly suggested)', ...
+        'Clear existing', ...
+        'Yes', 'No', 'Yes');
+    if strcmp(ButtonName,'Yes')
+        lines=find_system(topLevel,'FindAll','On','SearchDepth',1,'Type','Line');
+        delete_line(lines);
+        tmp=find_system(topLevel,'FindAll','On','SearchDepth',1,'BlockType','Inport');
+        delete_block(tmp);
+        tmp=find_system(topLevel,'FindAll','On','SearchDepth',1,'BlockType','OutPort');
+        delete_block(tmp);
+    end
     % Specify inport and outport sizes.
     inportSize=[30 14];
     outportSize=[30 14];
@@ -270,7 +285,6 @@ if strcmp(ButtonName,'Yes')
             add_line(topLevel,sprintf('%s/1',get(inportsAll(i),'Name')),sprintf('%s/%s',get_param(parent,'Name'),portNum));
         end
     end
-    
     % For each of the outports.
     for i=1:length(outportsAll)
         % Get the parent of the outport.
@@ -280,15 +294,99 @@ if strcmp(ButtonName,'Yes')
         % Get the port handles of the parent
         parentPorts=get_param(parent,'PortHandles');
         outPortPos=get(parentPorts.Outport(str2double(portNum)),'Position');
-
+        try
             tmp=add_block('built-in/Outport',sprintf('%s/%s',topLevel,get(outportsAll(i),'Name')),'Position',[outStart outPortPos(2)-outportSize(2)/2 outStart+inportSize(1) outPortPos(2)+outportSize(2)/2]);
-
+        end;try
             add_line(topLevel,sprintf('%s/%s',get_param(parent,'Name'),portNum),sprintf('%s/1',get(outportsAll(i),'Name')));
-  
+        end
     end
 end
-
-if false
-    unLinkedSubSystems=find_system(topLevel,'FindAll','On','SearchDepth',1,'LinkStatus','inactive');
-    set(unLinkedSubSystems,'LinkStatus','restore');
+return;
+% Here be dragons
+%% Connect Reused Inports
+inPortsReused=[ports.inStraightUsedBefore];
+for i=1:length(inPortsReused)
+    % Get the parent of the outport.
+    parent=get(inPortsReused(i),'Parent');
+    % Get the port number of the outport
+    portNum=get(inPortsReused(i),'Port');
+    % Get the port handles of the parent
+    parentPorts=get_param(parent,'PortHandles');
+    add_line(topLevel,sprintf('%s/1',get(inportsAll(i),'Name')),sprintf('%s/%s',get_param(parent,'Name'),portNum),'autorouting','on')
 end
+%% Connect Feed Forward
+inFeedForwards=[ports.inFeedForward ports.inFeedForwardReused];
+outFeedForwards=[ports.outFeedForward ports(i).outFeedBack];
+% %
+for i=1:length(outFeedForwards)
+    % Get the parent of the outport.
+    parentOut=get(outFeedForwards(i),'Parent');
+    % Get the port number of the outport
+    portNumOut=get(outFeedForwards(i),'Port');
+    %
+    fedInPorts=inFeedForwards(strcmp(get(outFeedForwards(i),'Name'),get(inFeedForwards,'Name')));
+    for j=1:length(fedInPorts)
+        parentIn=get(fedInPorts(j),'Parent');
+        % Get the port number of the outport
+        portNumIn=get(fedInPorts(j),'Port');
+        outName=sprintf('%s/%s',get_param(parentOut,'Name'),portNumOut);
+        inName=sprintf('%s/%s',get_param(parentIn,'Name'),portNumIn);
+        add_line(topLevel,outName,inName,'autorouting','on')
+    end
+end
+outFeedBacks=fliplr([ports.outFeedBack,ports.outFeedBoth]);
+inFeedBacks=[ports.inFeedBack];
+offset=[20 60];
+delaySize=[15 40];
+for i=1:length(outFeedBacks)
+    % Get the parent of the outport.
+    parentOut=get(outFeedBacks(i),'Parent');
+    % Get the port number of the outport
+    portNumOut=get(outFeedBacks(i),'Port');
+    % Get the handles of the outports of the out parent block
+    parentOutHandles=get_param(parentOut,'PortHandles');
+    % Where should the line start.
+    startPos=get(parentOutHandles.Outport(str2double(portNumOut)),'Position');
+    parentBlock=get_param(parentOut,'Position');
+    
+    fedInPorts=inFeedBacks(strcmp(get(outFeedBacks(i),'Name'),get(inFeedBacks,'Name')));
+    n=length(fedInPorts);
+    for j=1:n
+        % Get the parent of the inport.
+        parentIn=get(fedInPorts(j),'Parent');
+        % Get the port number of the outport
+        portNumIn=get(fedInPorts(j),'Port');
+        % Get the handles of the inports of the in parent block.
+        parentInHandles=get_param(parentIn,'PortHandles');
+        % Where should the line end
+        endPos=get(parentInHandles.Inport(str2double(portNumIn)),'Position');
+        
+        pos=[parentBlock(3)-delaySize(1) parentBlock(4)+offset(2).*(i*j)-delaySize(2)/2 parentBlock(3) parentBlock(4)+offset(2).*(i*j)+delaySize(2)/2];
+        tmp=add_block('built-in/UnitDelay',sprintf('%s/%sDelay',topLevel,get(outFeedBacks(i),'Name')),'Position',pos,'Orientation','Left');
+        tmp=get(tmp,'PortHandles');
+        delayIn =get(tmp.Inport,'Position');
+        delayOut=get(tmp.Outport,'Position');
+        
+        % Line from out block to delay.
+        pos=zeros(4,2);
+        pos(1,:)=startPos;
+        pos(2,:)=[pos(1,1)+offset(1).*(i*j) pos(1,2)];
+        pos(3,:)=[pos(2,1)               delayIn(2)];
+        pos(4,:)=delayIn;
+        add_line(topLevel,pos);
+        
+        % Line from delay to in block
+        pos=zeros(4,2);
+        pos(4,:)=endPos;
+        pos(3,:)=[endPos(1)-offset(1).*(i*j) endPos(2)];
+        pos(2,:)=[endPos(1)-offset(1).*(i*j) delayOut(2)];
+        pos(1,:)=delayOut;
+        add_line(topLevel,pos);
+    end
+end
+% 
+% %%
+% if false
+%     unLinkedSubSystems=find_system(topLevel,'FindAll','On','SearchDepth',1,'LinkStatus','inactive');
+%     set(unLinkedSubSystems,'LinkStatus','restore');
+% end
