@@ -247,9 +247,9 @@ if strcmp(ButtonName,'Yes')
     % Offset
     offset=200;
     % Offset from the left
-    inStart=max([10 min(linkedPosition(:,1))-offset]);
+    inStart=300;
     % Offset after the last block.
-    outStart=max(linkedPosition(:,3))+offset;
+    outStart=max(linkedPosition(:,3))+inStart;
     
     % For each of the inports.
     for i=1:length(inportsAll)
@@ -263,7 +263,7 @@ if strcmp(ButtonName,'Yes')
         inPortPos=get(parentPorts.Inport(str2double(portNum)),'Position');
         try
             % Add a block at the top level with the name of the inport.
-            tmp=add_block('built-in/Inport',sprintf('%s/%s',topLevel,get(inportsAll(i),'Name')),'Position',[inStart inPortPos(2)-inportSize(2)/2 inStart+inportSize(1) inPortPos(2)+inportSize(2)/2]);
+            tmp=add_block('built-in/Inport',sprintf('%s/%s',topLevel,get(inportsAll(i),'Name')),'Position',[10 inPortPos(2)-inportSize(2)/2 10+inportSize(1) inPortPos(2)+inportSize(2)/2]);
         end
         try
             % Add a line from the recently added inport to the in port.
@@ -280,11 +280,12 @@ if strcmp(ButtonName,'Yes')
         % Get the port handles of the parent
         parentPorts=get_param(parent,'PortHandles');
         outPortPos=get(parentPorts.Outport(str2double(portNum)),'Position');
-
+        try
             tmp=add_block('built-in/Outport',sprintf('%s/%s',topLevel,get(outportsAll(i),'Name')),'Position',[outStart outPortPos(2)-outportSize(2)/2 outStart+inportSize(1) outPortPos(2)+outportSize(2)/2]);
-
-            add_line(topLevel,sprintf('%s/%s',get_param(parent,'Name'),portNum),sprintf('%s/1',get(outportsAll(i),'Name')));
-  
+        end
+        try
+            add_line(topLevel,sprintf('%s/%s',get(outportsAll(i),'Name'),portNum),sprintf('%s/1',get(tmp,'Name')));
+        end
     end
 end
 
