@@ -1,26 +1,89 @@
-% function optimalPortOrder
-topLevel=gcs;
-% Find all selected subsystems in the current level.
-subSystems=find_system(topLevel,'FindAll','On','SearchDepth',1,'Selected','on','Type','Block');
-% find_system seems to find topLevel as a system even with search depth of 1 remove it
-toss=strcmpi(get_param(topLevel,'Parent'),get(subSystems,'Parent'));
-subSystems(toss)='';
+function optimalPortOrder(topLevel)
+% optimalPortOrder - Orders the ports of subsystems to minimize line
+% crossings. It does this by taking determining the order the blocks are
+% arranged in (Either vertically or horizontally). And then finding all of
+% the port names for that block then determining if ports occur before or
+% after that subsystem
+%
+% Linked libraries will have their status set to 'inactive'. This is so
+% that if the changes are not wanted you can always pull when resolving
+% link status. If the changes improve the signal flow you can resolve the
+% link status and push the results.
+%
+% Usage: 
+%
+% Syntax:  optimalPortOrder
+%
+% Inputs:
+%    topLevel - Top level system. If this is specified all blocks from this
+%    level with the BlockType='SubSystem' will be used. If nothing is given
+%    then only selected blocks from the current subsystem will be used.
+%
+% Outputs:
+%    none
+%
+% Example: 
+%    optimalPortOrder
 
-if length(subSystems)<2
-   errordlg('Please select at least 2 subsystems'); 
-   error('Please select at least 2 subsystems'); 
+% Other m-files required: none
+% Subfunctions: none
+% MAT-files required: none
+%
+% See also: OTHER_FUNCTION_NAME1,  OTHER_FUNCTION_NAME2
+% Author: Jed Frey
+% email: mathworks@exstatic.org
+% Website: https://github.com/jedediahfrey/simulink_OptimalPortNumbering
+% July 2013; Last revision: 22-July-2013
+
+%------------- BEGIN CODE --------------
+if nargin<1
+    topLevel=gcs;
+    % Find all selected subsystems in the current level.
+    % To a depth of 1.
+    % That are selected.
+    % With parent of the top level.
+    subSystems=find_system(topLevel,'FindAll','On','SearchDepth',1,'Selected','on','Parent',topLevel,'Type','Block');
+    if length(subSystems)<2
+        errormsg='Please select at least 2 subsystems';
+        errordlg(errormsg);
+        error(errormsg);
+    end
+else
+    % Find all subsystems in the top level.
+    % To a depth of 1.
+    % That are in the top level.
+    subSystems=find_system(topLevel,'FindAll','On','SearchDepth',1,'BlockType','SubSystem','Parent',topLevel,'Type','Block');
+    if length(subSystems)<2
+        errormsg='Please enter subsystem with least 2 subsystems';
+        errordlg(errormsg);
+        error(errormsg);
+    end
 end
 
-% Get the position of all the libraries
+% Get the position of all the subsystems
 linkedPosition=cell2mat(get(subSystems,'Position'));
-% Sort them by vertical position. Meaning topmost subsystem is 'first'.
-% Bottom most subsystem is 'last'.
-[~,s]=sort(linkedPosition(:,2));
-subSystems=subSystems(s);
+% Determine if there is less variance in vertical or horizontal placement
+% this is used to determine the placement order.
+
+% If there is less variance in the x direction
+if std(diff((linkedPosition(:,1))))<std(diff((linkedPosition(:,2))))
+    % Sort them by vertical position. Meaning top subsystem is 'first';
+    % Bottom most subsystem is 'last'.
+    [~,sort_order]=sort(linkedPosition(:,2));
+    % If there is less variance in the y direction
+else
+    % Sort them by horizontal position. Meaning left subsystem is 'first';
+    % Right most subsystem is 'last'.
+    [~,sort_order]=sort(linkedPosition(:,1));
+end
+% Arrange according to the sort results:
+subSystems=subSystems(sort_order);
 
 % Disable the link. If all the changes we are about to make are good
 % the link can be push back. If not then no harm no foul.
 set(subSystems,'LinkStatus','inactive');
+
+
 %% Find all of the I/O blocks in subsystems
 % For each of the subsystems
 for i=1:length(subSystems)
@@ -41,8 +104,9 @@ for i=1:length(subSystems)
         [~,sorted_order]=sort(lower(portNames));
         % Rearrange the inports into alphabetical order.
         ports(i).in=in_tmp(sorted_order); %#ok<*SAGROW,*AGROW>
+    else
+        ports(i).in=cell(0,0);
     end
-    
     % Repeat for the outports.
     if ~isempty(out_tmp)
         portNames=get(out_tmp,'Name');
@@ -51,6 +115,8 @@ for i=1:length(subSystems)
         end
         [~,sorted_order]=sort(lower(portNames));
         ports(i).out=out_tmp(sorted_order);
+    else
+        ports(i).out=cell(0,0);
     end
 end
 %% Get relative port positions
@@ -94,7 +160,7 @@ for i=1:length(subSystems)
         % Get the current outport port name
         outPortName=get(ports(i).out(j),'Name');
         % Get all of the in ports after the current block with the same name
-        ins=strcmp(outPortName,get(ports(i).inAfter(:,2),'Name'));
+        ins=strcmpi(outPortName,get(ports(i).inAfter(:,2),'Name'));
         % Find the last one since you want that line on 'top'.
         inAfterIdx=find(ins,1,'last');
         % Get all of the outports before the current block with the same name.
@@ -121,7 +187,7 @@ for i=1:length(subSystems)
             % Classify current out port as 'feed both'.
             ports(i).outFeedBoth=[ports(i).outFeedBoth,ports(i).out(j)];
         else
-            % Unknown combination of ports.
+            % Unknown combination of ports statuses.
             fprintf('inAfterIdx - %d\n',inAfterIdx);
             fprintf('inBeforeIdx - %d\n',inBeforeIdx);
             save('debug.mat',ports);
@@ -236,22 +302,27 @@ for i=1:length(subSystems)
         set(ports(i).IdealOutOrder(j),'Port',num2str(j));
     end
 end
+%% Clear old ports and lines
+ButtonName = questdlg('Would you like to clear current lines, inports and out ports (strongly suggested)', ...
+    'Clear existing', ...
+    'Yes', 'No', 'Yes');
+if strcmp(ButtonName,'Yes')
+    lines=find_system(topLevel,'FindAll','On','SearchDepth',1,'Type','Line');
+    delete_line(lines);
+    tmp=find_system(topLevel,'FindAll','On','SearchDepth',1,'BlockType','Inport');
+    for i=1:length(tmp)
+        delete_block(tmp(i));
+    end
+    tmp=find_system(topLevel,'FindAll','On','SearchDepth',1,'BlockType','Outport');
+    for i=1:length(tmp)
+        delete_block(tmp(i));
+    end
+end
 %% Add Inports & Connect.
 ButtonName = questdlg('Would you like to add in and out ports for blocks that go straight in or out', ...
     'Add I/O', ...
     'Yes', 'No', 'Yes');
 if strcmp(ButtonName,'Yes')
-    ButtonName = questdlg('Would you like to clear current lines, inports and out ports (strongly suggested)', ...
-        'Clear existing', ...
-        'Yes', 'No', 'Yes');
-    if strcmp(ButtonName,'Yes')
-        lines=find_system(topLevel,'FindAll','On','SearchDepth',1,'Type','Line');
-        delete_line(lines);
-        tmp=find_system(topLevel,'FindAll','On','SearchDepth',1,'BlockType','Inport');
-        delete_block(tmp);
-        tmp=find_system(topLevel,'FindAll','On','SearchDepth',1,'BlockType','OutPort');
-        delete_block(tmp);
-    end
     % Specify inport and outport sizes.
     inportSize=[30 14];
     outportSize=[30 14];
@@ -293,27 +364,43 @@ if strcmp(ButtonName,'Yes')
         portNum=get(outportsAll(i),'Port');
         % Get the port handles of the parent
         parentPorts=get_param(parent,'PortHandles');
+        % Get the position of the specified outports.
         outPortPos=get(parentPorts.Outport(str2double(portNum)),'Position');
         try
+            % Add a new outport.
             tmp=add_block('built-in/Outport',sprintf('%s/%s',topLevel,get(outportsAll(i),'Name')),'Position',[outStart outPortPos(2)-outportSize(2)/2 outStart+inportSize(1) outPortPos(2)+outportSize(2)/2]);
         end;try
+            % Connect the new outport.
             add_line(topLevel,sprintf('%s/%s',get_param(parent,'Name'),portNum),sprintf('%s/1',get(outportsAll(i),'Name')));
         end
+    end
+    % Create duplicate inports
+    ButtonName = questdlg('Would you like to add duplicate inports for signals already used? These will connect all reused inports to a duplicate inport block', ...
+        'Add Duplicate In', ...
+        'Yes', 'No', 'Yes');
+    if strcmp(ButtonName,'Yes')
+        %% Connect Reused Inports
+        inPortsReused=[ports.inStraightUsedBefore];
+        for i=1:length(inPortsReused)
+            % Get the parent of the outport.5
+            parent=get(inPortsReused(i),'Parent');
+            % Get the port number of the outport
+            portNum=get(inPortsReused(i),'Port');
+            % Get the port handles of the parent
+            parentPorts=get_param(parent,'PortHandles');
+            % Get the inport position.
+            inPortPos=get(parentPorts.Inport(str2double(portNum)),'Position');
+            try
+                tmp=add_block(sprintf('%s/%s',topLevel,get(inPortsReused(i),'Name')),sprintf('%s/%s',topLevel,get(inPortsReused(i),'Name')),'CopyOption', 'duplicate', 'MakeNameUnique', 'on', 'Position',[inStart inPortPos(2)-inportSize(2)/2 inStart+inportSize(1) inPortPos(2)+inportSize(2)/2]);
+                add_line(topLevel,sprintf('%s/1',get(tmp,'Name')),sprintf('%s/%s',get_param(parent,'Name'),portNum));
+            end
+        end
+        
     end
 end
 return;
 % Here be dragons
-%% Connect Reused Inports
-inPortsReused=[ports.inStraightUsedBefore];
-for i=1:length(inPortsReused)
-    % Get the parent of the outport.
-    parent=get(inPortsReused(i),'Parent');
-    % Get the port number of the outport
-    portNum=get(inPortsReused(i),'Port');
-    % Get the port handles of the parent
-    parentPorts=get_param(parent,'PortHandles');
-    add_line(topLevel,sprintf('%s/1',get(inportsAll(i),'Name')),sprintf('%s/%s',get_param(parent,'Name'),portNum),'autorouting','on')
-end
+return;
 %% Connect Feed Forward
 inFeedForwards=[ports.inFeedForward ports.inFeedForwardReused];
 outFeedForwards=[ports.outFeedForward ports(i).outFeedBack];
@@ -352,6 +439,7 @@ for i=1:length(outFeedBacks)
     fedInPorts=inFeedBacks(strcmp(get(outFeedBacks(i),'Name'),get(inFeedBacks,'Name')));
     n=length(fedInPorts);
     for j=1:n
+        try
         % Get the parent of the inport.
         parentIn=get(fedInPorts(j),'Parent');
         % Get the port number of the outport
@@ -382,6 +470,7 @@ for i=1:length(outFeedBacks)
         pos(2,:)=[endPos(1)-offset(1).*(i*j) delayOut(2)];
         pos(1,:)=delayOut;
         add_line(topLevel,pos);
+        end
     end
 end
 % 
