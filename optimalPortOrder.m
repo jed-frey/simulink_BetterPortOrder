@@ -29,11 +29,11 @@ function optimalPortOrder(topLevel)
 % Subfunctions: none
 % MAT-files required: none
 %
-% See also: OTHER_FUNCTION_NAME1,  OTHER_FUNCTION_NAME2
+% See also:
 % Author: Jed Frey
 % email: mathworks@exstatic.org
 % Website: https://github.com/jedediahfrey/simulink_OptimalPortNumbering
-% July 2013; Last revision: 22-July-2013
+% July 2013; Last revision: 29-July-2013
 
 %------------- BEGIN CODE --------------
 if nargin<1
