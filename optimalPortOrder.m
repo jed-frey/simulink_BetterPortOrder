@@ -10,7 +10,7 @@ function optimalPortOrder(topLevel)
 % link status. If the changes improve the signal flow you can resolve the
 % link status and push the results.
 %
-% Usage: 
+% Usage:
 %
 % Syntax:  optimalPortOrder
 %
@@ -22,7 +22,7 @@ function optimalPortOrder(topLevel)
 % Outputs:
 %    none
 %
-% Example: 
+% Example:
 %    optimalPortOrder
 
 % Other m-files required: none
@@ -275,7 +275,7 @@ for i=1:length(subSystems)
     % previously used in.
     [~,s]=sort(reusedInPortsBefore);
     ports(i).inStraightReused=ports(i).inStraightUsedBefore(s);
-
+    
     % Sort the reused inports from later blocks by the block they will be
     % used in.
     [~,s]=sort(reusedInPortsAfter);
@@ -309,13 +309,23 @@ ButtonName = questdlg('Would you like to clear current lines, inports and out po
 if strcmp(ButtonName,'Yes')
     lines=find_system(topLevel,'FindAll','On','SearchDepth',1,'Type','Line');
     delete_line(lines);
-    tmp=find_system(topLevel,'FindAll','On','SearchDepth',1,'BlockType','Inport');
+    tmp=1;
+    while ~isempty(tmp)
+        tmp=find_system(topLevel,'FindAll','On','SearchDepth',1,'BlockType','Inport');
+        for i=1:length(tmp)
+            delete_block(tmp(i));
+        end
+    end
+    tmp=find_system(topLevel,'FindAll','On','SearchDepth',1,'BlockType','InportShadow');
     for i=1:length(tmp)
         delete_block(tmp(i));
     end
-    tmp=find_system(topLevel,'FindAll','On','SearchDepth',1,'BlockType','Outport');
-    for i=1:length(tmp)
-        delete_block(tmp(i));
+    tmp=1;
+    while ~isempty(tmp)
+        tmp=find_system(topLevel,'FindAll','On','SearchDepth',1,'BlockType','Outport');
+        for i=1:length(tmp)
+            delete_block(tmp(i));
+        end
     end
 end
 %% Add Inports & Connect.
@@ -398,84 +408,105 @@ if strcmp(ButtonName,'Yes')
         
     end
 end
-return;
-% Here be dragons
-return;
 %% Connect Feed Forward
-inFeedForwards=[ports.inFeedForward ports.inFeedForwardReused];
-outFeedForwards=[ports.outFeedForward ports(i).outFeedBack];
-% %
-for i=1:length(outFeedForwards)
-    % Get the parent of the outport.
-    parentOut=get(outFeedForwards(i),'Parent');
-    % Get the port number of the outport
-    portNumOut=get(outFeedForwards(i),'Port');
-    %
-    fedInPorts=inFeedForwards(strcmp(get(outFeedForwards(i),'Name'),get(inFeedForwards,'Name')));
-    for j=1:length(fedInPorts)
-        parentIn=get(fedInPorts(j),'Parent');
+ButtonName = questdlg('Would you like to add connect feed forward ports?', ...
+    'FeedForward In', ...
+    'Yes', 'No', 'Yes');
+if strcmp(ButtonName,'Yes')
+    inFeedForwards=[ports.inFeedForward ports.inFeedForwardReused];
+    outFeedForwards=[ports.outFeedForward ports(i).outFeedBack];
+    % %
+    for i=1:length(outFeedForwards)
+        % Get the parent of the outport.
+        parentOut=get(outFeedForwards(i),'Parent');
         % Get the port number of the outport
-        portNumIn=get(fedInPorts(j),'Port');
-        outName=sprintf('%s/%s',get_param(parentOut,'Name'),portNumOut);
-        inName=sprintf('%s/%s',get_param(parentIn,'Name'),portNumIn);
-        add_line(topLevel,outName,inName,'autorouting','on')
-    end
-end
-outFeedBacks=fliplr([ports.outFeedBack,ports.outFeedBoth]);
-inFeedBacks=[ports.inFeedBack];
-offset=[20 60];
-delaySize=[15 40];
-for i=1:length(outFeedBacks)
-    % Get the parent of the outport.
-    parentOut=get(outFeedBacks(i),'Parent');
-    % Get the port number of the outport
-    portNumOut=get(outFeedBacks(i),'Port');
-    % Get the handles of the outports of the out parent block
-    parentOutHandles=get_param(parentOut,'PortHandles');
-    % Where should the line start.
-    startPos=get(parentOutHandles.Outport(str2double(portNumOut)),'Position');
-    parentBlock=get_param(parentOut,'Position');
-    
-    fedInPorts=inFeedBacks(strcmp(get(outFeedBacks(i),'Name'),get(inFeedBacks,'Name')));
-    n=length(fedInPorts);
-    for j=1:n
-        try
-        % Get the parent of the inport.
-        parentIn=get(fedInPorts(j),'Parent');
-        % Get the port number of the outport
-        portNumIn=get(fedInPorts(j),'Port');
-        % Get the handles of the inports of the in parent block.
-        parentInHandles=get_param(parentIn,'PortHandles');
-        % Where should the line end
-        endPos=get(parentInHandles.Inport(str2double(portNumIn)),'Position');
-        
-        pos=[parentBlock(3)-delaySize(1) parentBlock(4)+offset(2).*(i*j)-delaySize(2)/2 parentBlock(3) parentBlock(4)+offset(2).*(i*j)+delaySize(2)/2];
-        tmp=add_block('built-in/UnitDelay',sprintf('%s/%sDelay',topLevel,get(outFeedBacks(i),'Name')),'Position',pos,'Orientation','Left');
-        tmp=get(tmp,'PortHandles');
-        delayIn =get(tmp.Inport,'Position');
-        delayOut=get(tmp.Outport,'Position');
-        
-        % Line from out block to delay.
-        pos=zeros(4,2);
-        pos(1,:)=startPos;
-        pos(2,:)=[pos(1,1)+offset(1).*(i*j) pos(1,2)];
-        pos(3,:)=[pos(2,1)               delayIn(2)];
-        pos(4,:)=delayIn;
-        add_line(topLevel,pos);
-        
-        % Line from delay to in block
-        pos=zeros(4,2);
-        pos(4,:)=endPos;
-        pos(3,:)=[endPos(1)-offset(1).*(i*j) endPos(2)];
-        pos(2,:)=[endPos(1)-offset(1).*(i*j) delayOut(2)];
-        pos(1,:)=delayOut;
-        add_line(topLevel,pos);
+        portNumOut=get(outFeedForwards(i),'Port');
+        %
+        fedInPorts=inFeedForwards(strcmp(get(outFeedForwards(i),'Name'),get(inFeedForwards,'Name')));
+        for j=1:length(fedInPorts)
+            parentIn=get(fedInPorts(j),'Parent');
+            % Get the port number of the outport
+            portNumIn=get(fedInPorts(j),'Port');
+            outName=sprintf('%s/%s',get_param(parentOut,'Name'),portNumOut);
+            inName=sprintf('%s/%s',get_param(parentIn,'Name'),portNumIn);
+            add_line(topLevel,outName,inName,'autorouting','on')
         end
     end
 end
-% 
-% %%
-% if false
-%     unLinkedSubSystems=find_system(topLevel,'FindAll','On','SearchDepth',1,'LinkStatus','inactive');
-%     set(unLinkedSubSystems,'LinkStatus','restore');
-% end
+
+%% Connect Feed Back w/delay
+ButtonName = questdlg('Would you like to add connect feedback w/delay ports?', ...
+    'FeedForward In', ...
+    'Yes', 'No', 'Yes');
+if strcmp(ButtonName,'Yes')
+    outFeedBacks=fliplr([ports.outFeedBack,ports.outFeedBoth]);
+    inFeedBacks=[ports.inFeedBack];
+    offset=[20 60];
+    delaySize=[15 40];
+    for i=1:length(outFeedBacks)
+        % Get the parent of the outport.
+        parentOut=get(outFeedBacks(i),'Parent');
+        % Get the port number of the outport
+        portNumOut=get(outFeedBacks(i),'Port');
+        % Get the handles of the outports of the out parent block
+        parentOutHandles=get_param(parentOut,'PortHandles');
+        % Where should the line start.
+        startPos=get(parentOutHandles.Outport(str2double(portNumOut)),'Position');
+        parentBlock=get_param(parentOut,'Position');
+        
+        fedInPorts=inFeedBacks(strcmp(get(outFeedBacks(i),'Name'),get(inFeedBacks,'Name')));
+        n=length(fedInPorts);
+        for j=1:n
+            try
+                % Get the parent of the inport.
+                parentIn=get(fedInPorts(j),'Parent');
+                % Get the port number of the outport
+                portNumIn=get(fedInPorts(j),'Port');
+                % Get the handles of the inports of the in parent block.
+                parentInHandles=get_param(parentIn,'PortHandles');
+                % Where should the line end
+                endPos=get(parentInHandles.Inport(str2double(portNumIn)),'Position');
+                
+                pos=[parentBlock(3)-delaySize(1) parentBlock(4)+offset(2).*(i*j)-delaySize(2)/2 parentBlock(3) parentBlock(4)+offset(2).*(i*j)+delaySize(2)/2];
+                blockPath=sprintf('%s/%sDelay',topLevel,get(outFeedBacks(i),'Name'));
+                try
+                    tmp=get_param(blockPath,'Handle');
+                    set(tmp,'Position',pos);
+                catch
+                    tmp=add_block('built-in/UnitDelay',blockPath,'Position',pos,'Orientation','Left');
+                end
+                tmp=get(tmp,'PortHandles');
+                delayIn =get(tmp.Inport,'Position');
+                delayOut=get(tmp.Outport,'Position');
+                
+                % Line from out block to delay.
+                pos=zeros(4,2);
+                pos(1,:)=startPos;
+                pos(2,:)=[pos(1,1)+offset(1).*(i*j) pos(1,2)];
+                pos(3,:)=[pos(2,1)               delayIn(2)];
+                pos(4,:)=delayIn;
+                add_line(topLevel,pos);
+                
+                % Line from delay to in block
+                pos=zeros(4,2);
+                pos(4,:)=endPos;
+                pos(3,:)=[endPos(1)-offset(1).*(i*j) endPos(2)];
+                pos(2,:)=[endPos(1)-offset(1).*(i*j) delayOut(2)];
+                pos(1,:)=delayOut;
+                add_line(topLevel,pos);
+            end
+        end
+    end
+end
+
+%% Relink inactive subsystems?
+ButtonName = questdlg('Would you like to push changes to linked libraries?', ...
+    'FeedForward In', ...
+    'Yes', 'No', 'Yes');
+if strcmp(ButtonName,'Yes')
+    %%
+    if false
+        unLinkedSubSystems=find_system(topLevel,'FindAll','On','SearchDepth',1,'LinkStatus','inactive');
+        set(unLinkedSubSystems,'LinkStatus','propagate');
+    end
+end
