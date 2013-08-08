@@ -4,34 +4,9 @@ Model {
   MdlSubVersion		  0
   GraphicalInterface {
     NumRootInports	    0
-    NumRootOutports	    5
-    Outport {
-      BusObject		      ""
-      BusOutputAsStruct	      "off"
-      Name		      "Horn"
-    }
-    Outport {
-      BusObject		      ""
-      BusOutputAsStruct	      "off"
-      Name		      "TurboCommand"
-    }
-    Outport {
-      BusObject		      ""
-      BusOutputAsStruct	      "off"
-      Name		      "TurnSignal Left"
-    }
-    Outport {
-      BusObject		      ""
-      BusOutputAsStruct	      "off"
-      Name		      "TurnSignal Right"
-    }
-    Outport {
-      BusObject		      ""
-      BusOutputAsStruct	      "off"
-      Name		      "Headlights"
-    }
+    NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.20"
+    ComputedModelVersion    "1.104"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -52,9 +27,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "freyjed"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Jul 22 16:26:42 2013"
-  RTWModifiedTimeStamp	  296385986
-  ModelVersionFormat	  "1.%<AutoIncrement:20>"
+  LastModifiedDate	  "Thu Aug 08 12:02:51 2013"
+  RTWModifiedTimeStamp	  297828471
+  ModelVersionFormat	  "1.%<AutoIncrement:104>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -93,7 +68,7 @@ Model {
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "portOrderDemo"
     signals_		    []
-    overrideMode_	    [0U]
+    overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
       Dimension		      1
@@ -749,7 +724,7 @@ Model {
   }
   System {
     Name		    "portOrderDemo"
-    Location		    [425, 103, 1793, 1033]
+    Location		    [966, 74, 1914, 550]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -761,15 +736,16 @@ Model {
     TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
     TiledPageScale	    1
     ShowPageBoundaries	    off
-    ZoomFactor		    "100"
+    ZoomFactor		    "78"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "97"
+    SIDHighWatermark	    "232"
     Block {
       BlockType		      SubSystem
-      Name		      "Subsystem"
-      SID		      "50"
-      Ports		      []
-      Position		      [525, 298, 835, 602]
+      Name		      "Subsystem1"
+      SID		      "38"
+      Ports		      [4, 4]
+      Position		      [85, 21, 310, 149]
+      ZOrder		      -1
       MinAlgLoopOccurrences   off
       PropExecContextOutsideSubsystem off
       RTWSystemCode	      "Auto"
@@ -778,8 +754,8 @@ Model {
       RequestExecContextInheritance off
       MaskHideContents	      off
       System {
-	Name			"Subsystem"
-	Location		[966, 74, 1913, 1124]
+	Name			"Subsystem1"
+	Location		[697, 446, 1344, 1043]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -791,13 +767,307 @@ Model {
 	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
 	TiledPageScale		1
 	ShowPageBoundaries	off
-	ZoomFactor		"125"
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "A"
+	  SID			  "39"
+	  Position		  [25, 33, 55, 47]
+	  ZOrder		  -1
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "B"
+	  SID			  "40"
+	  Position		  [25, 68, 55, 82]
+	  ZOrder		  -2
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "M"
+	  SID			  "161"
+	  Position		  [25, 148, 55, 162]
+	  ZOrder		  -3
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "G"
+	  SID			  "158"
+	  Position		  [25, 103, 55, 117]
+	  ZOrder		  -4
+	  Port			  "4"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "Q"
+	  SID			  "171"
+	  Position		  [240, 158, 270, 172]
+	  ZOrder		  -5
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "D"
+	  SID			  "42"
+	  Position		  [240, 78, 270, 92]
+	  ZOrder		  -6
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "C"
+	  SID			  "41"
+	  Position		  [240, 33, 270, 47]
+	  ZOrder		  -23
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "E"
+	  SID			  "153"
+	  Position		  [240, 128, 270, 142]
+	  ZOrder		  -24
+	  Port			  "4"
+	  IconDisplay		  "Port number"
+	}
+      }
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Subsystem2"
+      SID		      "21"
+      Ports		      [4, 2]
+      Position		      [335, 221, 560, 349]
+      ZOrder		      -2
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      System {
+	Name			"Subsystem2"
+	Location		[226, 307, 869, 852]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "C"
+	  SID			  "22"
+	  Position		  [25, 33, 55, 47]
+	  ZOrder		  -1
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "E"
+	  SID			  "23"
+	  Position		  [25, 68, 55, 82]
+	  ZOrder		  -2
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "A"
+	  SID			  "154"
+	  Position		  [25, 123, 55, 137]
+	  ZOrder		  -3
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "J"
+	  SID			  "159"
+	  Position		  [15, 238, 45, 252]
+	  ZOrder		  -4
+	  Port			  "4"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "F"
+	  SID			  "26"
+	  Position		  [240, 33, 270, 47]
+	  ZOrder		  -23
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "G"
+	  SID			  "25"
+	  Position		  [240, 78, 270, 92]
+	  ZOrder		  -24
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+      }
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Subsystem3"
+      SID		      "27"
+      Ports		      [4, 2]
+      Position		      [615, 406, 840, 534]
+      ZOrder		      -3
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      System {
+	Name			"Subsystem3"
+	Location		[422, 416, 1065, 961]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Inport
+	  Name			  "D"
+	  SID			  "28"
+	  Position		  [25, 33, 55, 47]
+	  ZOrder		  -1
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "C"
+	  SID			  "29"
+	  Position		  [25, 78, 55, 92]
+	  ZOrder		  -2
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "H"
+	  SID			  "155"
+	  Position		  [35, 138, 65, 152]
+	  ZOrder		  -3
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "I"
+	  SID			  "157"
+	  Position		  [40, 223, 70, 237]
+	  ZOrder		  -4
+	  Port			  "4"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "K"
+	  SID			  "30"
+	  Position		  [240, 78, 270, 92]
+	  ZOrder		  -5
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "J"
+	  SID			  "31"
+	  Position		  [240, 33, 270, 47]
+	  ZOrder		  -23
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+      }
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Test Case 1\nNon-Copied In Ports"
+      SID		      "32"
+      Ports		      [3]
+      Position		      [25, 374, 250, 506]
+      ZOrder		      -4
+      MinAlgLoopOccurrences   off
+      PropExecContextOutsideSubsystem off
+      RTWSystemCode	      "Auto"
+      FunctionWithSeparateData off
+      Opaque		      off
+      RequestExecContextInheritance off
+      MaskHideContents	      off
+      System {
+	Name			"Test Case 1\nNon-Copied In Ports"
+	Location		[966, 74, 1898, 534]
+	Open			on
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"77"
+	Block {
+	  BlockType		  Inport
+	  Name			  "Case 1"
+	  SID			  "230"
+	  Position		  [15, 178, 45, 192]
+	  ZOrder		  -1
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "Case 2 & 3"
+	  SID			  "231"
+	  Position		  [15, 148, 45, 162]
+	  ZOrder		  -2
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
+	  Name			  "Case 4"
+	  SID			  "232"
+	  Position		  [15, 118, 45, 132]
+	  ZOrder		  -3
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
 	Block {
 	  BlockType		  SubSystem
-	  Name			  "Subsystem1"
-	  SID			  "27"
-	  Ports			  [2, 2]
-	  Position		  [175, 419, 400, 546]
+	  Name			  "Subsystem 1"
+	  SID			  "180"
+	  Ports			  [6, 2]
+	  Position		  [195, 12, 410, 208]
+	  ZOrder		  -4
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -806,9 +1076,9 @@ Model {
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  System {
-	    Name		    "Subsystem1"
-	    Location		    [776, 548, 1363, 909]
-	    Open		    on
+	    Name		    "Subsystem 1"
+	    Location		    [615, 404, 1258, 949]
+	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
 	    ScreenColor		    "white"
@@ -819,35 +1089,73 @@ Model {
 	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
 	    TiledPageScale	    1
 	    ShowPageBoundaries	    off
-	    ZoomFactor		    "100"
+	    ZoomFactor		    "117"
 	    Block {
 	      BlockType		      Inport
-	      Name		      "FuelCommand"
-	      SID		      "28"
-	      Position		      [25, 33, 55, 47]
-	      ZOrder		      -1
+	      Name		      "Case 1"
+	      SID		      "184"
+	      Position		      [15, 13, 45, 27]
+	      ZOrder		      -6
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
 	      BlockType		      Inport
-	      Name		      "DesiredPath"
-	      SID		      "29"
-	      Position		      [25, 78, 55, 92]
+	      Name		      "Case 2 & 3"
+	      SID		      "192"
+	      Position		      [15, 63, 45, 77]
+	      ZOrder		      -5
 	      Port		      "2"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
-	      BlockType		      Outport
-	      Name		      "SteeringAngle"
-	      SID		      "30"
-	      Position		      [240, 78, 270, 92]
+	      BlockType		      Inport
+	      Name		      "Case 4"
+	      SID		      "199"
+	      Position		      [15, 113, 45, 127]
+	      ZOrder		      -4
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "Case 8"
+	      SID		      "212"
+	      Position		      [15, 273, 45, 287]
+	      ZOrder		      -1
+	      Port		      "4"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "Case 6 & 7"
+	      SID		      "202"
+	      Position		      [15, 213, 45, 227]
+	      ZOrder		      -2
+	      Port		      "5"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "Case 5"
+	      SID		      "200"
+	      Position		      [15, 163, 45, 177]
+	      ZOrder		      -3
+	      Port		      "6"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
 	      BlockType		      Outport
-	      Name		      "EnginePower"
-	      SID		      "31"
-	      Position		      [240, 33, 270, 47]
+	      Name		      "Case 12"
+	      SID		      "226"
+	      Position		      [185, 63, 215, 77]
+	      ZOrder		      -23
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "Case 9"
+	      SID		      "217"
+	      Position		      [185, 13, 215, 27]
 	      ZOrder		      -23
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -856,10 +1164,11 @@ Model {
 	}
 	Block {
 	  BlockType		  SubSystem
-	  Name			  "Subsystem2"
-	  SID			  "32"
-	  Ports			  [4, 3]
-	  Position		  [175, 621, 400, 749]
+	  Name			  "Subsystem 2"
+	  SID			  "187"
+	  Ports			  [6, 2]
+	  Position		  [555, 234, 780, 381]
+	  ZOrder		  -5
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -868,8 +1177,8 @@ Model {
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  System {
-	    Name		    "Subsystem2"
-	    Location		    [1438, 663, 2025, 1024]
+	    Name		    "Subsystem 2"
+	    Location		    [0, 0, 1920, 1148]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -884,68 +1193,157 @@ Model {
 	    ZoomFactor		    "100"
 	    Block {
 	      BlockType		      Inport
-	      Name		      "SteeringAngle"
-	      SID		      "34"
-	      Position		      [25, 33, 55, 47]
-	      ZOrder		      -1
+	      Name		      "Case 12"
+	      SID		      "227"
+	      Position		      [15, 253, 45, 267]
+	      ZOrder		      -6
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
 	      BlockType		      Inport
-	      Name		      "EnginePower"
-	      SID		      "33"
-	      Position		      [25, 78, 55, 92]
+	      Name		      "Case 9"
+	      SID		      "224"
+	      Position		      [15, 163, 45, 177]
+	      ZOrder		      -4
 	      Port		      "2"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
 	      BlockType		      Inport
-	      Name		      "FuelCommand"
-	      SID		      "58"
-	      Position		      [25, 118, 55, 132]
+	      Name		      "Case 2 & 3"
+	      SID		      "194"
+	      Position		      [15, 13, 45, 27]
+	      ZOrder		      -1
 	      Port		      "3"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
 	      BlockType		      Inport
-	      Name		      "Wheel Speed"
-	      SID		      "88"
-	      Position		      [25, 173, 55, 187]
+	      Name		      "Case 4"
+	      SID		      "197"
+	      Position		      [15, 63, 45, 77]
+	      ZOrder		      -2
+	      Port		      "4"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "Case 8"
+	      SID		      "213"
+	      Position		      [15, 213, 45, 227]
+	      ZOrder		      -5
+	      Port		      "5"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "Case 6 & 7"
+	      SID		      "203"
+	      Position		      [15, 113, 45, 127]
+	      ZOrder		      -3
+	      Port		      "6"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "Case 10 & 11"
+	      SID		      "218"
+	      Position		      [385, 63, 415, 77]
+	      ZOrder		      -23
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "Case 5"
+	      SID		      "193"
+	      Position		      [385, 13, 415, 27]
+	      ZOrder		      -23
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "Subsystem 3"
+	  SID			  "189"
+	  Ports			  [4, 1]
+	  Position		  [895, 414, 1120, 551]
+	  ZOrder		  -6
+	  MinAlgLoopOccurrences	  off
+	  PropExecContextOutsideSubsystem off
+	  RTWSystemCode		  "Auto"
+	  FunctionWithSeparateData off
+	  Opaque		  off
+	  RequestExecContextInheritance	off
+	  MaskHideContents	  off
+	  System {
+	    Name		    "Subsystem 3"
+	    Location		    [422, 416, 1065, 961]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "Case 12"
+	      SID		      "228"
+	      Position		      [15, 13, 45, 27]
+	      ZOrder		      -1
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "Case 10 & 11"
+	      SID		      "219"
+	      Position		      [15, 228, 45, 242]
+	      ZOrder		      -2
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "Case 4"
+	      SID		      "198"
+	      Position		      [15, 83, 45, 97]
+	      ZOrder		      -3
+	      Port		      "3"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "Case 8"
+	      SID		      "225"
+	      Position		      [15, 153, 45, 167]
+	      ZOrder		      -4
 	      Port		      "4"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
 	      BlockType		      Outport
-	      Name		      "Headlights"
-	      SID		      "36"
-	      Position		      [240, 33, 270, 47]
+	      Name		      "Case 6 & 7"
+	      SID		      "201"
+	      Position		      [185, 13, 215, 27]
 	      ZOrder		      -23
-	      IconDisplay	      "Port number"
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "TurnSignal Left"
-	      SID		      "35"
-	      Position		      [240, 78, 270, 92]
-	      Port		      "2"
-	      IconDisplay	      "Port number"
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "TurnSignal Right"
-	      SID		      "37"
-	      Position		      [240, 118, 270, 132]
-	      Port		      "3"
 	      IconDisplay	      "Port number"
 	    }
 	  }
 	}
 	Block {
 	  BlockType		  SubSystem
-	  Name			  "Subsystem3"
-	  SID			  "21"
-	  Ports			  [2, 2]
-	  Position		  [175, 219, 400, 346]
+	  Name			  "Subsystem 4"
+	  SID			  "205"
+	  Ports			  [2, 1]
+	  Position		  [1235, 500, 1460, 635]
+	  ZOrder		  -7
 	  MinAlgLoopOccurrences	  off
 	  PropExecContextOutsideSubsystem off
 	  RTWSystemCode		  "Auto"
@@ -954,8 +1352,8 @@ Model {
 	  RequestExecContextInheritance	off
 	  MaskHideContents	  off
 	  System {
-	    Name		    "Subsystem3"
-	    Location		    [620, 285, 1207, 646]
+	    Name		    "Subsystem 4"
+	    Location		    [0, 0, 1920, 1148]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -970,145 +1368,165 @@ Model {
 	    ZoomFactor		    "100"
 	    Block {
 	      BlockType		      Inport
-	      Name		      "Throttle Postion"
-	      SID		      "22"
-	      Position		      [25, 33, 55, 47]
-	      ZOrder		      -1
+	      Name		      "Case 12"
+	      SID		      "229"
+	      Position		      [15, 83, 45, 97]
+	      ZOrder		      -2
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
 	      BlockType		      Inport
-	      Name		      "Wheel Speed"
-	      SID		      "23"
-	      Position		      [25, 68, 55, 82]
+	      Name		      "Case 10 & 11"
+	      SID		      "220"
+	      Position		      [15, 13, 45, 27]
+	      ZOrder		      -1
 	      Port		      "2"
 	      IconDisplay	      "Port number"
 	    }
 	    Block {
 	      BlockType		      Outport
-	      Name		      "FuelCommand"
-	      SID		      "26"
-	      Position		      [240, 33, 270, 47]
+	      Name		      "Case 8"
+	      SID		      "211"
+	      Position		      [160, 13, 190, 27]
 	      ZOrder		      -23
-	      IconDisplay	      "Port number"
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "TurboCommand"
-	      SID		      "25"
-	      Position		      [240, 78, 270, 92]
-	      Port		      "2"
 	      IconDisplay	      "Port number"
 	    }
 	  }
 	}
-	Block {
-	  BlockType		  SubSystem
-	  Name			  "Subsystem4"
-	  SID			  "38"
-	  Ports			  [2, 2]
-	  Position		  [175, 29, 400, 156]
-	  MinAlgLoopOccurrences	  off
-	  PropExecContextOutsideSubsystem off
-	  RTWSystemCode		  "Auto"
-	  FunctionWithSeparateData off
-	  Opaque		  off
-	  RequestExecContextInheritance	off
-	  MaskHideContents	  off
-	  System {
-	    Name		    "Subsystem4"
-	    Location		    [1333, 498, 1920, 859]
-	    Open		    off
-	    ModelBrowserVisibility  off
-	    ModelBrowserWidth	    200
-	    ScreenColor		    "white"
-	    PaperOrientation	    "landscape"
-	    PaperPositionMode	    "auto"
-	    PaperType		    "usletter"
-	    PaperUnits		    "inches"
-	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
-	    TiledPageScale	    1
-	    ShowPageBoundaries	    off
-	    ZoomFactor		    "100"
-	    Block {
-	      BlockType		      Inport
-	      Name		      "EnginePower"
-	      SID		      "39"
-	      Position		      [25, 33, 55, 47]
-	      ZOrder		      -1
-	      IconDisplay	      "Port number"
+	Line {
+	  SrcBlock		  "Case 1"
+	  SrcPort		  1
+	  Points		  [130, 0]
+	  DstBlock		  "Subsystem 1"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "Case 4"
+	  SrcPort		  1
+	  Points		  [102, 0]
+	  Branch {
+	    Points		    [0, 140]
+	    Branch {
+	      Points		      [-20, 0; 0, 55]
+	      DstBlock		      "Subsystem 2"
+	      DstPort		      4
 	    }
-	    Block {
-	      BlockType		      Inport
-	      Name		      "TurboCommand"
-	      SID		      "40"
-	      Position		      [25, 68, 55, 82]
-	      Port		      "2"
-	      IconDisplay	      "Port number"
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "Horn"
-	      SID		      "42"
-	      Position		      [240, 78, 270, 92]
-	      IconDisplay	      "Port number"
-	    }
-	    Block {
-	      BlockType		      Outport
-	      Name		      "Throttle Position"
-	      SID		      "41"
-	      Position		      [240, 33, 270, 47]
-	      ZOrder		      -23
-	      Port		      "2"
-	      IconDisplay	      "Port number"
+	    Branch {
+	      Points		      [0, 235]
+	      DstBlock		      "Subsystem 3"
+	      DstPort		      3
 	    }
 	  }
+	  Branch {
+	    Points		    [28, 0]
+	    DstBlock		    "Subsystem 1"
+	    DstPort		    3
+	  }
+	}
+	Line {
+	  SrcBlock		  "Case 2 & 3"
+	  SrcPort		  1
+	  Points		  [109, 0]
+	  Branch {
+	    Points		    [0, 140]
+	    DstBlock		    "Subsystem 2"
+	    DstPort		    3
+	  }
+	  Branch {
+	    Points		    [21, 0]
+	    DstBlock		    "Subsystem 1"
+	    DstPort		    2
+	  }
+	}
+	Line {
+	  SrcBlock		  "Subsystem 1"
+	  SrcPort		  1
+	  Points		  [15, 0]
+	  Branch {
+	    Points		    [0, 185]
+	    DstBlock		    "Subsystem 2"
+	    DstPort		    1
+	  }
+	  Branch {
+	    Points		    [450, 0]
+	    Branch {
+	      DstBlock		      "Subsystem 3"
+	      DstPort		      1
+	    }
+	    Branch {
+	      Points		      [340, 0]
+	      DstBlock		      "Subsystem 4"
+	      DstPort		      1
+	    }
+	  }
+	}
+	Line {
+	  SrcBlock		  "Subsystem 1"
+	  SrcPort		  2
+	  Points		  [5, 0; 0, 110]
+	  DstBlock		  "Subsystem 2"
+	  DstPort		  2
+	}
+	Line {
+	  SrcBlock		  "Subsystem 2"
+	  SrcPort		  1
+	  Points		  [62, 0]
+	  Branch {
+	    Points		    [0, 195]
+	    DstBlock		    "Subsystem 3"
+	    DstPort		    2
+	  }
+	  Branch {
+	    Points		    [310, 0; 0, 330]
+	    DstBlock		    "Subsystem 4"
+	    DstPort		    2
+	  }
+	}
+	Line {
+	  SrcBlock		  "Subsystem 4"
+	  SrcPort		  1
+	  Points		  [9, 0; 0, 207; -694, 0]
+	  Branch {
+	    Points		    [-715, 0; 0, -432]
+	    Branch {
+	      Points		      [0, -220]
+	      DstBlock		      "Subsystem 1"
+	      DstPort		      4
+	    }
+	    Branch {
+	      DstBlock		      "Subsystem 2"
+	      DstPort		      5
+	    }
+	  }
+	  Branch {
+	    Points		    [0, -242]
+	    DstBlock		    "Subsystem 3"
+	    DstPort		    4
+	  }
+	}
+	Line {
+	  SrcBlock		  "Subsystem 3"
+	  SrcPort		  1
+	  Points		  [398, 0; 0, 306; -1377, 0; 0, -501]
+	  Branch {
+	    Points		    [-28, 0; 0, 80]
+	    DstBlock		    "Subsystem 2"
+	    DstPort		    6
+	  }
+	  Branch {
+	    Points		    [0, -135]
+	    DstBlock		    "Subsystem 1"
+	    DstPort		    5
+	  }
+	}
+	Line {
+	  SrcBlock		  "Subsystem 2"
+	  SrcPort		  2
+	  Points		  [9, 0; 0, 68; -614, 0]
+	  DstBlock		  "Subsystem 1"
+	  DstPort		  6
 	}
       }
-    }
-    Block {
-      BlockType		      Outport
-      Name		      "Horn"
-      SID		      "43"
-      Position		      [1405, 143, 1435, 157]
-      ZOrder		      -23
-      IconDisplay	      "Port number"
-    }
-    Block {
-      BlockType		      Outport
-      Name		      "TurboCommand"
-      SID		      "44"
-      Position		      [1405, 293, 1435, 307]
-      ZOrder		      -23
-      Port		      "2"
-      IconDisplay	      "Port number"
-    }
-    Block {
-      BlockType		      Outport
-      Name		      "TurnSignal Left"
-      SID		      "45"
-      Position		      [1405, 583, 1435, 597]
-      ZOrder		      -23
-      Port		      "3"
-      IconDisplay	      "Port number"
-    }
-    Block {
-      BlockType		      Outport
-      Name		      "TurnSignal Right"
-      SID		      "46"
-      Position		      [1405, 663, 1435, 677]
-      ZOrder		      -23
-      Port		      "4"
-      IconDisplay	      "Port number"
-    }
-    Block {
-      BlockType		      Outport
-      Name		      "Headlights"
-      SID		      "47"
-      Position		      [1405, 623, 1435, 637]
-      ZOrder		      -23
-      Port		      "5"
-      IconDisplay	      "Port number"
     }
   }
 }
